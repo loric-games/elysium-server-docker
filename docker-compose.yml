@@ -47,10 +47,10 @@ services:
 
       # --- Game Server Configuration ---
       # Note: Quotes are required if your server name contains spaces.
-      - SERVER_NAME=NaMP
+      - SERVER_NAME=My Elysium Server
       - SERVER_PORT=33000 # Internal port the server listens on
       - SERVER_ADDR=0.0.0.0 # 0.0.0.0 means "Listen on all interfaces" (Required for Docker)
-      - SERVER_PASSWORD=natandmatt # Join password for players
+      - SERVER_PASSWORD=changeme # Join password for players
 
       # --- Backup & Save Settings ---
       - SERVER_SAVE_FREQUENCY=5 # Auto-save every N minutes
