@@ -1,0 +1,60 @@
+version: "3.8"
+
+services:
+  elysium-server:
+    # Use the Dockerfile in the current directory to build the image
+    build: .
+
+    # A friendly name for the container (makes 'docker logs' commands easier)
+    container_name: elysium-server
+
+    # Restart Policy:
+    # "always" - Ensures the server restarts if it crashes or if the host PC reboots.
+    # "unless-stopped" - Restarts automatically unless you explicitly run 'docker stop'.
+    restart: always
+
+    # --- NETWORK CONFIGURATION ---
+    # OPTION 1: Bridge Mode (Recommended for Windows/WSL2)
+    # Maps specific ports from the container to the host.
+    # Required if running on Windows to properly route traffic through the firewall.
+    # ports:
+    # - "33000:33000/udp" # Game Traffic (UDP is critical for movement/sync)
+    # - "33001:33001/udp" # RCON/Query Traffic
+
+    # OPTION 2: Host Mode (Linux Native Performance)
+    # Uncomment 'network_mode: host' and COMMENT OUT 'ports' above.
+    # This skips the Docker network layer for lower latency.
+    # WARNING: On Windows/WSL2, this binds to the hidden VM IP, not localhost.
+    network_mode: host
+    # -----------------------------
+
+    volumes:
+      # Mount the server script so you can edit logic without rebuilding the image
+      - ./server.sh:/home/steam/server.sh
+
+      # Persist the game data (Saves, Configs, Logs) on your host machine.
+      # This ensures you don't lose your world if the container is deleted.
+      - ./elysium_data:/home/steam/elysium
+
+    environment:
+      # --- System Settings ---
+      - TZ=America/New_York # Sets server logs to your local timezone
+
+      # --- Steam Settings ---
+      - STEAM_USER=anonymous # "anonymous" works for most dedicated servers
+      - STEAM_PASS= # Password (leave empty for anonymous)
+      - STEAM_CHANNEL=public # "public" is the main branch. Use "beta" if testing updates.
+
+      # --- Game Server Configuration ---
+      # Note: Quotes are required if your server name contains spaces.
+      - SERVER_NAME=NaMP
+      - SERVER_PORT=33000 # Internal port the server listens on
+      - SERVER_ADDR=0.0.0.0 # 0.0.0.0 means "Listen on all interfaces" (Required for Docker)
+      - SERVER_PASSWORD=natandmatt # Join password for players
+
+      # --- Backup & Save Settings ---
+      - SERVER_SAVE_FREQUENCY=5 # Auto-save every N minutes
+      - SERVER_BACKUPS_ENABLED=true # Enable rotating backups
+      - SERVER_BACKUPS_FREQUENCY=30 # Create a backup every N minutes
+      - SERVER_MAX_BACKUPS=5 # Keep only the last N backups to save disk space
+      - SERVER_PROFILE_ENABLED=false # Debug profiling (Keep false for performance)
