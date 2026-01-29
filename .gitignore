@@ -1,0 +1,12 @@
+# Ignore everything by default
+*
+
+# But track these specific files
+!.gitignore
+!docker-compose.yml
+!dockerfile
+!README.md
+!server.sh
+
+# Explicitly ignore the data directory (in case pattern above doesn't catch it)
+elysium_data/
