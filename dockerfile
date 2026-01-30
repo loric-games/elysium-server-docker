@@ -14,16 +14,24 @@ ENV LC_ALL en_US.UTF-8
 # Setup steam user
 RUN useradd -u 1001 -m steam
 WORKDIR /home/steam
-USER steam
 
-# Download steamcmd
+# Download steamcmd (as root)
 RUN mkdir steamcmd && cd steamcmd && \
-    curl "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf -
+    curl "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz" | tar zxvf - && \
+    chown -R steam:steam /home/steam/steamcmd
 
-# Initialize steamcmd
+# Switch to steam user to initialize steamcmd
+USER steam
 RUN ./steamcmd/steamcmd.sh +quit && \
     mkdir -pv /home/steam/.steam/sdk64/ && \
     ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
-# Default command
-CMD ["bash", "/home/steam/server.sh"]
+# Switch back to root for entrypoint (needs to fix volume permissions)
+USER root
+
+# Copy entrypoint script
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+# Use entrypoint to fix permissions then run server
+ENTRYPOINT ["/entrypoint.sh"]

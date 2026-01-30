@@ -7,6 +7,6 @@
 !dockerfile
 !README.md
 !server.sh
+!entrypoint.sh
 
-# Explicitly ignore the data directory (in case pattern above doesn't catch it)
-elysium_data/
+

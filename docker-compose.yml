@@ -14,19 +14,10 @@ services:
     restart: always
 
     # --- NETWORK CONFIGURATION ---
-    # OPTION 1: Bridge Mode (Recommended for Windows/WSL2)
-    # Maps specific ports from the container to the host.
-    # Required if running on Windows to properly route traffic through the firewall.
-    # ports:
-    # - "33000:33000/udp" # Game Traffic (UDP is critical for movement/sync)
-    # - "33001:33001/udp" # RCON/Query Traffic
-
-    # OPTION 2: Host Mode (Linux Native Performance)
-    # Uncomment 'network_mode: host' and COMMENT OUT 'ports' above.
-    # This skips the Docker network layer for lower latency.
-    # WARNING: On Windows/WSL2, this binds to the hidden VM IP, not localhost.
-    network_mode: host
-    # -----------------------------
+    # Bridge Mode
+    ports:
+      - "33000:33000/udp"
+      - "33001:33001/udp"
 
     volumes:
       # Mount the server script so you can edit logic without rebuilding the image
@@ -58,3 +49,4 @@ services:
       - SERVER_BACKUPS_FREQUENCY=30 # Create a backup every N minutes
       - SERVER_MAX_BACKUPS=5 # Keep only the last N backups to save disk space
       - SERVER_PROFILE_ENABLED=false # Debug profiling (Keep false for performance)
+
