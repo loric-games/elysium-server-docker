@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 0. Fix Permissions (ensure steam user owns everything)
+echo "--- FIXING PERMISSIONS ---"
+chown -R steam:steam /home/steam/elysium 2>/dev/null || true
+chmod -R 755 /home/steam/elysium 2>/dev/null || true
+
 # 1. Setup Defaults
 SERVER_NAME=${SERVER_NAME:-New Elysium Server}
 SERVER_ADDR=${SERVER_ADDR:-0.0.0.0}

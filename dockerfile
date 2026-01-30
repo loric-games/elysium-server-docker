@@ -25,5 +25,9 @@ RUN ./steamcmd/steamcmd.sh +quit && \
     mkdir -pv /home/steam/.steam/sdk64/ && \
     ln -s /home/steam/steamcmd/linux64/steamclient.so /home/steam/.steam/sdk64/steamclient.so
 
+# Pre-create elysium directory with correct permissions
+RUN mkdir -p /home/steam/elysium && \
+    chown -R steam:steam /home/steam/elysium
+
 # Default command
 CMD ["bash", "/home/steam/server.sh"]
